@@ -25,24 +25,14 @@ const renewAccessToken = async (req, res)=>{
 }
 
 const verifyEmail = async (req, res)=>{
-
-    const token = req.params.token
-    // verifying user token
-    jwt.verify(token, process.env.SECRET_KEY, async function(err, tokenPayload){
-       if(err) return res.status(403).json({msg: "token expired"})
-          if(err) return res.sendStatus(403)
-          // update user
-          try{
-             await User.findOneAndUpdate({_id: tokenPayload.User_id},{verify: true},{new:true}, (err,user)=>{
-             if(err) return res.status(403).json({msg: "verification expired!"})
-             // next
-              req.user_id = user._id
-              return res.status(200).json({message: 'User Verified Via Email!', status: true});
-             })     
-          }catch(err){
-             return res.status(400).json({message: err.message, status:false});
-       }         
-    })
+    const refreshToken = req.params.token;
+    if(!refreshToken) return res.status(403).json({message: 'Forbidden', status: false});
+    const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY);
+    const user_id = decoded.payload.user_id;
+    await User.findOneAndUpdate({_id: user_id},{verify: true},{new:true}, (err,user)=>{
+    if(err) return res.status(403).json({msg: "verification expired!"})
+    else return res.status(200).json({message: 'User Verified Via Email!', status: true});
+    }) 
 }
 
 

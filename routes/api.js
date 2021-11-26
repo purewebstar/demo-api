@@ -17,7 +17,7 @@ router.get('/read-profile', passport.authenticate('jwt', {session:false}), readP
 router.patch('/reset-password', passport.authenticate('jwt', {session:false}),resetPassword);
 
 
-router.post('/auth/verify-email', verifyEmail);
+router.post('/auth/verify-email/:token', verifyEmail);
 router.post('/auth/refresh-token', refreshToken);
 router.put('/auth/renew-access-token', renewAccessToken);
 

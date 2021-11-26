@@ -10,7 +10,7 @@ const api = require('./routes/api');
 const helmet = require('helmet');
 
 const server = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 4000;
 
 const corsOptions ={
     origin: 'http://localhost:3000',     
