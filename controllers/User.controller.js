@@ -92,13 +92,40 @@ const updateProfile = async(req, res)=>{
 
 const readProfile = async(req, res)=>{
     const user_id = req.user.payload.user_id;
-    const readUser = await User.findById({_id: user_id}, {returnOriginal: true});
-    return res.status(200).json({message: 'data retreived', user: readUser, status: true});
+    await User.findOne({_id: user_id},function(err, user){
+        if(err) return res.status(400).json({message: err.message, status:false})
+        else if(!user) return res.status(404).json({message: "Not Found!", status:false})
+        else {
+            const profile = {};
+            profile.name = user.name;
+            profile.birthday = user.birthday;
+            profile.gender = user.gender;
+            profile.email = user.email;
+            profile.verify = user.verify;
+            return res.status(200).json({profile: profile,status:true})
+        }
+    })
 }
 
+const resetPassword = async(req, res)=>{
+    const newPassword = req.body.newPassword;
+    const user_id = req.user.payload.user_id;
+    const encryptedPassword = await bcrypt.hash(newPassword, 10)
+    await User.findOneAndUpdate({_id: user_id}, {
+        password: encryptedPassword
+        }, {new:true}, (err, user) =>{
+        if(err) return res.status(400).json({message: err.message})
+        else if(user){
+        return res.status(201).json({message: 'success'})
+        }
+        else return res.status(401).json({message: 'unable to change password!'})
+    })
+}
 
 module.exports = {
     signUp, login,
     updateName,
-    updateProfile,readProfile
+    updateProfile,
+    readProfile,
+    resetPassword,
 }
