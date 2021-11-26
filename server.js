@@ -13,7 +13,7 @@ const server = express();
 const PORT = process.env.PORT || 4000;
 
 const corsOptions ={
-    origin: 'https://creative-tim.abraham-mitiku.com',     
+    origin: 'http://localhost:3000',     
     optionSuccessStatus: 200,
     methods: 'GET, POST, PUT, PATCH'
   }

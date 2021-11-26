@@ -5,7 +5,6 @@ importing modules
 
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const sendMail = require('../config/initMailer.js');
 const jwt = require('jsonwebtoken');
 
 const signUp = async (req, res)=>{
@@ -25,22 +24,7 @@ const signUp = async (req, res)=>{
         await newUser.save({new:true}, async(err,success)=>{
             if(err) return res.status(400).json({message: err.message})
             else if(success){
-                // if success fully user registered
-                const payload = {
-                    user_id: success._id,
-                    email: email
-                }
-                const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '2m'});
-                const refreshToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '3d'});
-                const from= `${process.env.SECRET_SITE_EMAIL}`,
-                    to = email,
-                    subject= 'Verify your Account',
-                    text= '',
-                    html = `<a href='${process.env.SITE_HOST}/api/auth/verify-email/${refreshToken}' target='_blank' '>Verify Your Account</a>`
-                
-                // sending verification to user email
-                sendMail(from, to,subject, text, html);
-                return res.status(201).json({accessToken: accessToken, refreshToken: refreshToken, status:true});
+                return res.status(201).json({ userID: success._id, status:true});
             }
         })
     }
@@ -73,26 +57,17 @@ const login = async (req, res)=>{
     }
 }
 
-const updateName = async(req, res)=>{
-    const user_id = req.user.payload.user_id;
-    const {name} = req.body;
-    await User.findOneAndUpdate({_id: user_id}, {name: name}, (err, user)=>{
-        if(err) return res.status(400).json({message: err.message, status:false})
-        else if(!user) return res.status(404).json({message: "Not Found!", status:false})
-        else return res.status(200).json({message: 'Name updated!',status:true})
-    });
-}
-
 const updateProfile = async(req, res)=>{
-    const {birthday, gender} = req.body;
+    const {name, email} = req.body;
     const user_id = req.user.payload.user_id;
     await User.findByIdAndUpdate({_id: user_id}, {
-        birthday: birthday,
-        gender: gender
+        name: name,
+        email: email
     }, (err, user)=>{
         if(err) return res.status(400).json({message: err.message, status:false})
         else if(!user) return res.status(404).json({message: "Not Found!", status:false})
         else return res.status(200).json({message: 'Profile Updated!',status:true})
+        
     });
 }
 
@@ -130,7 +105,6 @@ const resetPassword = async(req, res)=>{
 
 module.exports = {
     signUp, login,
-    updateName,
     updateProfile,
     readProfile,
     resetPassword,

@@ -16,8 +16,6 @@ const UserSchema = mongoose.Schema({
    },
    country: String,
    city: String,
-   birthday: String,
-   gender: String,
    verify: {
        type: Boolean,
        default: false
