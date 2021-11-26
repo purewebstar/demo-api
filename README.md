@@ -77,18 +77,17 @@ PATCH http://localhost:4000/api/update-profile
 Content-Type: application/json
 Authorization: Bearer <access-token>
 
+{
+    "name": "your name"
+    "email": "your email"
+}
+
 ```
 
-##### Update Name
-```rest
-PATCH http://localhost:4000/api/update-name
-Content-Type: application/json
-Authorization: Bearer <access-token>
-```
 
 ##### Verify Email
 ```rest
-POST http://localhost:4000/api/auth/verify-email/<refresh-token>
+POST http://localhost:4000/api/users/confirm/:id
 Content-Type: application/json
 
 ```
