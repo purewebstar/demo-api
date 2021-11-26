@@ -66,30 +66,48 @@ Content-Type: application/json
 ##### Read Profile
 ```rest
 GET http://localhost:4000/api/read-profile
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
 ```
 
 ##### Update Profile
 ```rest
 PATCH http://localhost:4000/api/update-profile
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
 ```
 
 ##### Update Name
 ```rest
-PATCH http://localhost:4000/api/read-name
+PATCH http://localhost:4000/api/update-name
+Content-Type: application/json
+Authorization: Bearer <access-token>
 ```
 
 ##### Verify Email
 ```rest
-POST http://localhost:4000/api/auth/verify-email/:token
+POST http://localhost:4000/api/auth/verify-email/<refresh-token>
+Content-Type: application/json
+
 ```
 
 ##### Refresh Token
 ```rest
 POST http://localhost:4000/api/auth/refresh-token/:token
+Content-Type: application/json
+{
+    "token": "your refresh-token"
+}
 ```
 
 ##### Renew Access Token
 ```rest
 PUT http://localhost:4000/api/auth/renew-access-token/:token
+Content-Type: application/json
+{
+    "refreshToken": "your refresh-token"
+}
 ```
 
