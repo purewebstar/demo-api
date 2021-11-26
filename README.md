@@ -41,8 +41,7 @@ SITE_HOST=?
 
 
 ## API Endpoints
-#### RegisterAPI
-##### example
+##### Register
 ```rest
 POST http://localhost:4000/api/signup
 Content-Type: application/json
@@ -64,8 +63,33 @@ Content-Type: application/json
 }
 ```
 
-##### reading user data
+##### Read Profile
 ```rest
 GET http://localhost:4000/api/read-profile
+```
+
+##### Update Profile
+```rest
+PATCH http://localhost:4000/api/update-profile
+```
+
+##### Update Name
+```rest
+PATCH http://localhost:4000/api/read-name
+```
+
+##### Verify Email
+```rest
+POST http://localhost:4000/api/auth/verify-email/:token
+```
+
+##### Refresh Token
+```rest
+POST http://localhost:4000/api/auth/refresh-token/:token
+```
+
+##### Renew Access Token
+```rest
+PUT http://localhost:4000/api/auth/renew-access-token/:token
 ```
 
