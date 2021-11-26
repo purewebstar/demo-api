@@ -40,13 +40,7 @@ const signUp = async (req, res)=>{
                 
                 // sending verification to user email
                 sendMail(from, to,subject, text, html);
-                const profile = {};
-                profile.name = user.name;
-                profile.birthday = user.birthday;
-                profile.gender = user.gender;
-                profile.email = user.email;
-                profile.verify = user.verify;
-                return res.status(201).json({accessToken: accessToken, refreshToken: refreshToken, status:true, profile: profile});
+                return res.status(201).json({accessToken: accessToken, refreshToken: refreshToken, status:true});
             }
         })
     }
