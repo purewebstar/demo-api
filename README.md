@@ -34,8 +34,6 @@ nodemon server.js
 PORT=?
 DATABASE_URI=?
 SECRET_KEY=?
-SECRET_SITE_EMAIL=? -> for email verification server
-SECRET_SITE_EMAIL_PASSWORD=?
 SITE_HOST=?
 ```
 
@@ -73,7 +71,7 @@ Authorization: Bearer <access-token>
 
 ##### Update Profile
 ```rest
-PATCH http://localhost:4000/api/update-profile
+POST http://localhost:4000/api/update-profile
 Content-Type: application/json
 Authorization: Bearer <access-token>
 

@@ -15,13 +15,17 @@ const refreshToken = async (req, res)=>{
 }
 
 const renewAccessToken = async (req, res)=>{
-    const refreshToken = req.body.refreshToken;
+    const refreshToken= req.body.refreshToken;
     if(!refreshToken) return res.status(401).json({message: 'Unauthorized', status: false});
-    const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY);
-    const result = await User.findById({_id: decoded.payload.user_id}, {new:true});
-    const payload = {user_id: result._id};
-    const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '2m'});
-    return res.status(201).json({accessToken: accessToken, status:true});
+    jwt.verify(refreshToken, process.env.SECRET_KEY, (err, success)=>{
+        if(err) return res.status(500).json({message: err.message});
+        else if(success){
+            const payload = {user_id: success.payload.user_id};
+            const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '30m'});
+            return res.status(201).json({accessToken: accessToken, status:true});
+        }
+    });
+   
 }
 
 const verifyUser = async (req, res)=>{

@@ -6,12 +6,30 @@ importing modules
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
+const geo = async()=>{
+    return(
+        await axios.get('https://geolocation-db.com/json').then(res=>{
+       return{
+           country: res.data.country_name,
+           city: res.data.city
+       }
+    }).catch(err=>{
+        console.log(err.message)
+    })
+    )
+}
 
 const signUp = async (req, res)=>{
     const {email, password, name} = req.body;
+
     if(name==='' || name===null){
         return res.status(400).json({message: 'Input required!' ,status: false})
     }
+    let g = await geo();
+    const country = g.country;
+    const city = g.city;
     const hashedPassword = await bcrypt.hash(password, 12);
     const result = await User.findOne({email: email}, {returnOriginal: true});
     if(!result){
@@ -19,6 +37,8 @@ const signUp = async (req, res)=>{
             name: name,
             email: email,
             email: email,
+            country: country,
+            city: city,
             password: hashedPassword
         });
         await newUser.save({new:true}, async(err,success)=>{
@@ -40,12 +60,12 @@ const login = async (req, res)=>{
       if(isMatch){
           const user_id = result._id;
           const payload = {user_id: user_id};
-          const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '2m'});
+          const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '30m'});
           const refreshToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '3d'});
           const profile = {};
           profile.name = result.name;
-          profile.birthday = result.birthday;
-          profile.gender = result.gender;
+          profile.country= result.country;
+          profile.city = result.city;
           profile.email = result.email;
           profile.verify = result.verify;
           return res.status(200).json({profile: profile, accessToken: accessToken, refreshToken: refreshToken, status:true});
@@ -58,16 +78,21 @@ const login = async (req, res)=>{
 }
 
 const updateProfile = async(req, res)=>{
-    const {name, email} = req.body;
+    const {name, email} = req.body;   
     const user_id = req.user.payload.user_id;
     await User.findByIdAndUpdate({_id: user_id}, {
         name: name,
         email: email
-    }, (err, user)=>{
+    },{new:true}, (err, user)=>{
         if(err) return res.status(400).json({message: err.message, status:false})
         else if(!user) return res.status(404).json({message: "Not Found!", status:false})
-        else return res.status(200).json({message: 'Profile Updated!',status:true})
-        
+        else {
+            const profile = {};
+            profile.name = user.name;
+            profile.email = user.email;
+            profile.verify = user.verify;
+            return res.status(200).json({profile: profile,message: 'Profile Updated!',status:true})
+        }
     });
 }
 
@@ -79,8 +104,8 @@ const readProfile = async(req, res)=>{
         else {
             const profile = {};
             profile.name = user.name;
-            profile.birthday = user.birthday;
-            profile.gender = user.gender;
+            profile.country = user.country;
+            profile.city = user.city;
             profile.email = user.email;
             profile.verify = user.verify;
             return res.status(200).json({profile: profile,status:true})
