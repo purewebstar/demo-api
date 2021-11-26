@@ -1,0 +1,14 @@
+Hello, Sir sorry for waiting. I completed the tasks you asked me. but, with a slight change only .. every feature is included.
+I have my personal server and I deploy it there. Here https://creative-tim.abraham-mitiku.com
+and for the backend source code. Here https://github.com/abriilo/demo-api , I stated necessary read me informations there.
+1. front end connected with backend.
+2. signup (register new user)
+3. verify (demo) user
+4. login (redirect authorized users to dashboard) 
+5. update profile (name, email, password)
+6. logout
+.. I used (accessToken and refreshToken) for authentication along with passport library.
+- figure outing cloudflare with my server taking me a little time so, for the sake of this task inorder to met the deadline.
+I used another method to get user country and city... and all will be saved on database.
+(NodeJs, ExpressJs, Mongodb, ReactJs(create-tim template))
+Thank your for your patience.

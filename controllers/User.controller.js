@@ -27,12 +27,12 @@ const signUp = async (req, res)=>{
     if(name==='' || name===null){
         return res.status(400).json({message: 'Input required!' ,status: false})
     }
-    let g = await geo();
-    const country = g.country;
-    const city = g.city;
     const hashedPassword = await bcrypt.hash(password, 12);
     const result = await User.findOne({email: email}, {returnOriginal: true});
     if(!result){
+        let g = await geo();
+        const country = g.country;
+        const city = g.city;
         const newUser = new User({
             name: name,
             email: email,
