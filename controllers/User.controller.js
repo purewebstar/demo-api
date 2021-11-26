@@ -30,21 +30,27 @@ const signUp = async (req, res)=>{
                     user_id: success._id,
                     email: email
                 }
-                const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '7d'})
-
+                const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '2m'});
+                const refreshToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '3d'});
                 const from= `${process.env.SECRET_SITE_EMAIL}`,
                     to = email,
                     subject= 'Verify your Account',
                     text= '',
-                    html = `<a href='${process.env.SITE_HOST}/api/auth/verify-email/${token}' target='_blank' '>Verify Your Account</a>`
+                    html = `<a href='${process.env.SITE_HOST}/api/auth/verify-email/${refreshToken}' target='_blank' '>Verify Your Account</a>`
                 
                 // sending verification to user email
-                sendMail(from, to,subject, text, html)      
-                return res.status(201).json({message: "verify your email!"})
+                sendMail(from, to,subject, text, html);
+                const profile = {};
+                profile.name = user.name;
+                profile.birthday = user.birthday;
+                profile.gender = user.gender;
+                profile.email = user.email;
+                profile.verify = user.verify;
+                return res.status(201).json({accessToken: accessToken, refreshToken: refreshToken, status:true, profile: profile});
             }
         })
     }
-    else if(result) return res.status(401).json({message: 'User exist!', status:false});
+    else if(result) return res.status(409).json({message: 'User exist!', status:false});
 }
 
 const login = async (req, res)=>{
@@ -58,7 +64,13 @@ const login = async (req, res)=>{
           const payload = {user_id: user_id};
           const accessToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '2m'});
           const refreshToken = jwt.sign({payload}, process.env.SECRET_KEY, {expiresIn: '3d'});
-          return res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, status:true});
+          const profile = {};
+          profile.name = result.name;
+          profile.birthday = result.birthday;
+          profile.gender = result.gender;
+          profile.email = result.email;
+          profile.verify = result.verify;
+          return res.status(200).json({profile: profile, accessToken: accessToken, refreshToken: refreshToken, status:true});
       }
       else return res.status(404).json({message: "password incorrect!", status:false})
     }

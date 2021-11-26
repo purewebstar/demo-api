@@ -15,7 +15,7 @@ const refreshToken = async (req, res)=>{
 }
 
 const renewAccessToken = async (req, res)=>{
-    const refreshToken = req.body.token;
+    const refreshToken = req.body.refreshToken;
     if(!refreshToken) return res.status(401).json({message: 'Unauthorized', status: false});
     const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY);
     const result = await User.findById({_id: decoded.payload.user_id}, {new:true});
